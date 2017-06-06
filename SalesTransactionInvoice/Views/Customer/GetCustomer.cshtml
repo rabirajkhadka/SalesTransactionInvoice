@@ -1,0 +1,85 @@
+﻿
+@{
+    ViewBag.Title = "Customers";
+}
+
+<h2>Customers</h2>
+<table>
+    <tr>
+        <td>
+            Search <input type="text" id="txtSearch" />
+            <input type="button" value="Search" id="btnSearch"/>
+            <input type="button" value="View All Customers" id="btnAllCustomer" />
+        </td>
+        </tr>
+    <tr>
+        <td>
+            <div id="UpdatePanel">
+
+            </div>
+        </td>
+    </tr>
+
+</table>
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            $("#btnAllCustomer").click(function () {
+
+                $.ajax({
+                    url: "@Url.Action("GetCustomer","Customer")",
+                    data: "",
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        loadData(data);
+                    },
+                    error: function () {
+                        alert("Failed! Please Try Again");
+                    }
+                });
+            });
+
+            $("#btnSearch").click(function () {
+
+                $.ajax({
+                    url: "@Url.Action("GetCustomerDatawithparameter", "Customer")",
+                    data: { prefix: $('#txtSearch').val() },
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        loadData(data);
+                    },
+                    error: function () {
+                        alert("Failed! Please Try Again");
+                    }
+                });
+            });
+
+            function loadData(data)
+            {
+                var tab = $('<table class="CustomerTable"> </table>');
+                var thead = $('<thead></thead>');
+                thead.append('<th>Customer ID</th>');
+                thead.append('<th>Customer Name</th>');
+                thead.append('<th>Customer Address</th>');
+                thead.append('<th>Customer Phone</th>');
+                thead.append('<th>Customer Email</th>');
+                tab.append(thead);
+                $.each(data, function (i, val) {
+                    var trow = $('<tr></tr>');
+                    trow.append('<td>' + val.Customer_ID + '</td>');
+                    trow.append('<td>' + val.Customer_NAME + '</td>');
+                    trow.append('<td>' + val.Customer_ADDR + '</td>');
+                    trow.append('<td>' + val.Customer_PHONE + '</td>');
+                    trow.append('<td>' + val.Customer_EMAIL + '</td>');
+                    tab.append(trow);
+                });
+                $("tr:add", tab).css('background-color', 'gray');
+                $("#UpdatePanel").html(tab);
+            };
+        }
+    </script>
+}
+
